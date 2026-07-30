@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
-# programa de cierre de caja
-# hecho por kevin
- 
-# lista de ventas del dia
-vs = [
+"""
+Programa de cierre de caja de La Comercial.
+Calcula ventas por método de pago, IVA, comisión POS y depósito neto.
+"""
+
+IVA = 0.12
+COMISION_POS = 0.05
+
+VENTAS_DIA = [
     ("EF", 150.00),
     ("TJ", 89.50),
     ("EF", 45.25),
@@ -15,39 +19,61 @@ vs = [
     ("TJ", 67.25),
     ("EF", 125.00),
 ]
- 
-def proc():
-    # variables para los totales
-    a = 0
-    b = 0
-    # recorre la lista de ventas
-    for v in vs:
-        if v[0] == "EF":
-            # suma al total
-            a = a + v[1]
+def calcular_totales(ventas):
+    total_efectivo = 0
+    total_tarjeta = 0
+
+    for metodo_pago, monto in ventas:
+        if metodo_pago == "EF":
+            total_efectivo += monto
         else:
-            # suma al total
-            b = b + v[1]
-    # aqui se calcula el iva del 10%
-    x = a - (a / 1.12)
-    x = round(x, 2)
-    y = b - (b / 1.12)
-    y = round(y, 2)
-    # la comision
-    c = b * 0.05
-    c = round(c, 2)
-    # t = a + b + c
-    # print("total", t)
+            total_tarjeta += monto
+
+    return total_efectivo, total_tarjeta
+
+
+def calcular_iva(monto):
+    return round(monto - (monto / (1 + IVA)), 2)
+
+
+def calcular_comision(total_tarjeta):
+    return round(total_tarjeta * COMISION_POS, 2)
+
+
+def imprimir_reporte(total_efectivo, total_tarjeta, iva_efectivo,
+                      iva_tarjeta, comision):
+    total_dia = total_efectivo + total_tarjeta
+    deposito_neto = total_dia - comision
+
     print("=" * 42)
     print("      CIERRE DE CAJA - LA COMERCIAL")
     print("=" * 42)
-    print("Ventas en efectivo:      Q " + str(round(a, 2)))
-    print("IVA incluido (efectivo): Q " + str(x))
-    print("Ventas con tarjeta:      Q " + str(round(b, 2)))
-    print("IVA incluido (tarjeta):  Q " + str(y))
-    print("Comisión del POS:        Q " + str(c))
+    print(f"Ventas en efectivo:      Q {total_efectivo:.2f}")
+    print(f"IVA incluido (efectivo): Q {iva_efectivo:.2f}")
+    print(f"Ventas con tarjeta:      Q {total_tarjeta:.2f}")
+    print(f"IVA incluido (tarjeta):  Q {iva_tarjeta:.2f}")
+    print(f"Comisión del POS:        Q {comision:.2f}")
     print("-" * 42)
-    print("Total del día:           Q " + str(round(a + b, 2)))
-    print("Depósito neto:           Q " + str(round(a + b - c, 2)))
- 
-proc()
+    print(f"Total del día:           Q {total_dia:.2f}")
+    print(f"Depósito neto:           Q {deposito_neto:.2f}")
+
+
+def procesar_cierre_caja():
+    total_efectivo, total_tarjeta = calcular_totales(VENTAS_DIA)
+
+    iva_efectivo = calcular_iva(total_efectivo)
+    iva_tarjeta = calcular_iva(total_tarjeta)
+
+    comision = calcular_comision(total_tarjeta)
+
+    imprimir_reporte(
+        total_efectivo,
+        total_tarjeta,
+        iva_efectivo,
+        iva_tarjeta,
+        comision
+    )
+
+
+if __name__ == "__main__":
+    procesar_cierre_caja()
