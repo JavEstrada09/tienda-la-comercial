@@ -17,51 +17,41 @@ VENDEDORES = [
     ("Lucía Morales", 33400.00),
 ]
 
-def calcular_comisiones():
+
+def calcular_comision(ventas):
+    if ventas > LIMITE_COMISION_ALTA:
+        return round(ventas * COMISION_ALTA, 2)
+    return round(ventas * COMISION_BAJA, 2)
+
+
+def calcular_bono(ventas):
+    if ventas > LIMITE_BONO:
+        return BONO
+    return 0
+
+
+def imprimir_reporte(vendedores):
     total_pagar = 0
 
     print("=" * 44)
     print("    COMISIONES DEL MES - LA COMERCIAL")
     print("=" * 44)
 
-    # recorre la lista
-    for vendedor in VENDEDORES:
+    for nombre, ventas in vendedores:
+        comision = calcular_comision(ventas)
+        bono = calcular_bono(ventas)
 
-        # si vendio mas de 30000
-        if vendedor[1] > LIMITE_COMISION_ALTA:
+        total = round(comision + bono, 2)
+        total_pagar += total
 
-            # calcula la comision del 8%
-            comision = vendedor[1] * COMISION_ALTA
-            comision = round(comision, 2)
-
-            # el bono es de 300
-            if vendedor[1] > LIMITE_BONO:
-                bono = BONO
-            else:
-                bono = 0
-
-            total = round(comision + bono, 2)
-            total_pagar = total_pagar + total
-
-            print(vendedor[0] + ": Q " + str(total))
-
-        else:
-
-            # calcula la comision del 5%
-            comision = vendedor[1] * COMISION_BAJA
-            comision = round(comision, 2)
-
-            bono = 0
-
-            total = round(comision + bono, 2)
-            total_pagar = total_pagar + total
-
-            print(vendedor[0] + ": Q " + str(total))
-
-    # ta = tp * 1.12
-    # print("con iva", ta)
+        print(nombre + ": Q " + str(total))
 
     print("-" * 44)
     print("Total a pagar: Q " + str(round(total_pagar, 2)))
+
+
+def calcular_comisiones():
+    imprimir_reporte(VENDEDORES)
+
 
 calcular_comisiones()
